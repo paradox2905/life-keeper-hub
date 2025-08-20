@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -21,6 +22,18 @@ import {
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportant, setIsImportant] = useState(false);
+  const [location, setLocation] = useState('medical');
+  const [title, setTitle] = useState('');
+  const [file, setFile] = useState<File | null>(null);
+  const [entries, setEntries] = useState({
+    medical: 0,
+    legal: 0,
+    digital: 0,
+    personal: 0,
+  });
+  const [isUploading, setIsUploading] = useState(false);
 
   if (loading) {
     return (
@@ -39,6 +52,59 @@ const Dashboard = () => {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate required fields
+    if (!title || !file || !location) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      // Create a unique filename with timestamp and user ID
+      const timestamp = new Date().toISOString();
+      const fileName = `${user.id}/${location}/${timestamp}_${file.name}`;
+
+      // Upload file to Supabase storage
+      const { data, error } = await supabase.storage
+        .from('vault')
+        .upload(fileName, file);
+
+      if (error) {
+        console.error('Upload error:', error);
+        alert('Failed to upload file. Please try again.');
+        return;
+      }
+
+      console.log('File uploaded successfully:', data);
+
+      // Increment the entry count for the selected location
+      setEntries((prevEntries) => ({
+        ...prevEntries,
+        [location]: prevEntries[location as keyof typeof prevEntries] + 1,
+      }));
+
+      // Reset the form to its default state
+      setTitle('');
+      setFile(null);
+      setLocation('medical');
+      setIsImportant(false);
+
+      // Close the modal
+      setIsModalOpen(false);
+      
+      alert('Entry added successfully!');
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      alert('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -91,7 +157,7 @@ const Dashboard = () => {
           <TabsContent value="vault" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-3xl font-bold">Your Secure Vault</h2>
-              <Button className="text-lg px-6 py-3">
+              <Button className="text-lg px-6 py-3" onClick={() => setIsModalOpen(true)}>
                 <Plus className="h-5 w-5 mr-2" />
                 Add New Entry
               </Button>
@@ -107,7 +173,7 @@ const Dashboard = () => {
                   <CardDescription>Health records, medications, emergency contacts</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-muted-foreground">0 entries</p>
+                  <p className="text-2xl font-bold text-muted-foreground">{entries.medical} entries</p>
                   <Button variant="ghost" className="w-full mt-3">View & Add</Button>
                 </CardContent>
               </Card>
@@ -121,7 +187,7 @@ const Dashboard = () => {
                   <CardDescription>Wills, insurance, important documents</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-muted-foreground">0 entries</p>
+                  <p className="text-2xl font-bold text-muted-foreground">{entries.legal} entries</p>
                   <Button variant="ghost" className="w-full mt-3">View & Add</Button>
                 </CardContent>
               </Card>
@@ -135,7 +201,7 @@ const Dashboard = () => {
                   <CardDescription>Passwords, accounts, digital assets</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-muted-foreground">0 entries</p>
+                  <p className="text-2xl font-bold text-muted-foreground">{entries.digital} entries</p>
                   <Button variant="ghost" className="w-full mt-3">View & Add</Button>
                 </CardContent>
               </Card>
@@ -149,7 +215,7 @@ const Dashboard = () => {
                   <CardDescription>Personal information, contacts, notes</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-muted-foreground">0 entries</p>
+                  <p className="text-2xl font-bold text-muted-foreground">{entries.personal} entries</p>
                   <Button variant="ghost" className="w-full mt-3">View & Add</Button>
                 </CardContent>
               </Card>
@@ -297,6 +363,86 @@ const Dashboard = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4">Add New Entry</h2>
+            <form onSubmit={handleFormSubmit}>
+              <div className="mb-4">
+                <Label htmlFor="location">Choose Location</Label>
+                <select
+                  id="location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full border rounded p-2"
+                  required
+                >
+                  <option value="medical">Medical</option>
+                  <option value="legal">Legal</option>
+                  <option value="digital">Digital</option>
+                  <option value="personal">Personal</option>
+                </select>
+              </div>
+              <div className="mb-4">
+                <Label htmlFor="title">Title</Label>
+                <input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full border rounded p-2"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <Label htmlFor="description">Description (Optional)</Label>
+                <textarea id="description" className="w-full border rounded p-2"></textarea>
+              </div>
+              <div className="mb-4">
+                <Label htmlFor="file">Upload File</Label>
+                <input
+                  type="file"
+                  id="file"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  className="w-full border rounded p-2"
+                  required
+                />
+              </div>
+              <div className="mb-4 flex items-center">
+                <Label htmlFor="important" className="mr-2">Mark as Important</Label>
+                <div
+                  className={`w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer ${
+                    isImportant ? 'bg-green-500' : ''
+                  }`}
+                  onClick={() => setIsImportant(!isImportant)}
+                >
+                  <div
+                    className={`bg-white w-4 h-4 rounded-full shadow-md transform ${
+                      isImportant ? 'translate-x-6' : ''
+                    }`}
+                  ></div>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setIsModalOpen(false)} 
+                  className="mr-2"
+                  disabled={isUploading}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isUploading}>
+                  {isUploading ? 'Uploading...' : 'Submit'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
