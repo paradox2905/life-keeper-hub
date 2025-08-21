@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import EntryList from '@/components/EntryList';
 import { 
   Shield, 
   Users, 
@@ -20,20 +27,246 @@ import {
   Plus
 } from 'lucide-react';
 
+interface VaultEntry {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  category: string;
+  file_name: string;
+  file_path: string;
+  file_size: number | null;
+  file_type: string | null;
+  is_important: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 const Dashboard = () => {
   const { user, loading } = useAuth();
+  const { toast } = useToast();
+  
+  // Form state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
-  const [location, setLocation] = useState('medical');
+  const [category, setCategory] = useState('medical');
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const [entries, setEntries] = useState({
+  const [isUploading, setIsUploading] = useState(false);
+
+  // View state
+  const [currentView, setCurrentView] = useState<'main' | 'entries'>('main');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [editingEntry, setEditingEntry] = useState<VaultEntry | null>(null);
+
+  // Data state
+  const [allEntries, setAllEntries] = useState<VaultEntry[]>([]);
+  const [entryCounts, setEntryCounts] = useState({
     medical: 0,
     legal: 0,
     digital: 0,
     personal: 0,
   });
-  const [isUploading, setIsUploading] = useState(false);
+
+  // Fetch entries on component mount and user change
+  useEffect(() => {
+    if (user) {
+      fetchEntries();
+    }
+  }, [user]);
+
+  const fetchEntries = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('vault_entries')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching entries:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load your vault entries.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setAllEntries(data || []);
+      
+      // Calculate counts by category
+      const counts = { medical: 0, legal: 0, digital: 0, personal: 0 };
+      data?.forEach(entry => {
+        if (entry.category in counts) {
+          counts[entry.category as keyof typeof counts]++;
+        }
+      });
+      setEntryCounts(counts);
+    } catch (error) {
+      console.error('Unexpected error fetching entries:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred while loading entries.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!title || !file || !category) {
+      toast({
+        title: "Missing information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      // Create unique filename
+      const timestamp = new Date().toISOString();
+      const fileName = `${user!.id}/${category}/${timestamp}_${file.name}`;
+
+      // Upload file to storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('vault')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        toast({
+          title: "Upload failed",
+          description: "Failed to upload file. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Save entry to database
+      const entryData = {
+        user_id: user!.id,
+        title,
+        description: description || null,
+        category,
+        file_name: file.name,
+        file_path: uploadData.path,
+        file_size: file.size,
+        file_type: file.type,
+        is_important: isImportant,
+      };
+
+      if (editingEntry) {
+        // Update existing entry
+        const { error: updateError } = await supabase
+          .from('vault_entries')
+          .update(entryData)
+          .eq('id', editingEntry.id);
+
+        if (updateError) {
+          console.error('Update error:', updateError);
+          toast({
+            title: "Update failed",
+            description: "Failed to update entry. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        toast({
+          title: "Entry updated",
+          description: "Your entry has been successfully updated.",
+        });
+      } else {
+        // Create new entry
+        const { error: insertError } = await supabase
+          .from('vault_entries')
+          .insert([entryData]);
+
+        if (insertError) {
+          console.error('Insert error:', insertError);
+          toast({
+            title: "Save failed",
+            description: "Failed to save entry. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        toast({
+          title: "Entry saved",
+          description: "Your entry has been successfully saved.",
+        });
+      }
+
+      // Reset form and refresh data
+      resetForm();
+      await fetchEntries();
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setFile(null);
+    setCategory('medical');
+    setIsImportant(false);
+    setIsModalOpen(false);
+    setEditingEntry(null);
+  };
+
+  const handleViewEntries = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    setCurrentView('entries');
+  };
+
+  const handleBackToMain = () => {
+    setCurrentView('main');
+    setSelectedCategory('');
+  };
+
+  const handleEditEntry = (entry: VaultEntry) => {
+    setEditingEntry(entry);
+    setTitle(entry.title);
+    setDescription(entry.description || '');
+    setCategory(entry.category);
+    setIsImportant(entry.is_important);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteEntry = (entryId: string) => {
+    setAllEntries(prev => prev.filter(entry => entry.id !== entryId));
+    // Recalculate counts
+    const updatedEntries = allEntries.filter(entry => entry.id !== entryId);
+    const counts = { medical: 0, legal: 0, digital: 0, personal: 0 };
+    updatedEntries.forEach(entry => {
+      if (entry.category in counts) {
+        counts[entry.category as keyof typeof counts]++;
+      }
+    });
+    setEntryCounts(counts);
+  };
+
+  const handleAddNew = () => {
+    resetForm();
+    setIsModalOpen(true);
+  };
 
   if (loading) {
     return (
@@ -54,58 +287,127 @@ const Dashboard = () => {
     await supabase.auth.signOut();
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate required fields
-    if (!title || !file || !location) {
-      alert('Please fill in all required fields.');
-      return;
-    }
-
-    setIsUploading(true);
-
-    try {
-      // Create a unique filename with timestamp and user ID
-      const timestamp = new Date().toISOString();
-      const fileName = `${user.id}/${location}/${timestamp}_${file.name}`;
-
-      // Upload file to Supabase storage
-      const { data, error } = await supabase.storage
-        .from('vault')
-        .upload(fileName, file);
-
-      if (error) {
-        console.error('Upload error:', error);
-        alert('Failed to upload file. Please try again.');
-        return;
-      }
-
-      console.log('File uploaded successfully:', data);
-
-      // Increment the entry count for the selected location
-      setEntries((prevEntries) => ({
-        ...prevEntries,
-        [location]: prevEntries[location as keyof typeof prevEntries] + 1,
-      }));
-
-      // Reset the form to its default state
-      setTitle('');
-      setFile(null);
-      setLocation('medical');
-      setIsImportant(false);
-
-      // Close the modal
-      setIsModalOpen(false);
-      
-      alert('Entry added successfully!');
-    } catch (error) {
-      console.error('Unexpected error:', error);
-      alert('An unexpected error occurred. Please try again.');
-    } finally {
-      setIsUploading(false);
-    }
+  const getEntriesForCategory = (categoryName: string): VaultEntry[] => {
+    return allEntries.filter(entry => entry.category === categoryName);
   };
+
+  // Show entry list view
+  if (currentView === 'entries') {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="border-b bg-card">
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="bg-primary/10 p-2 rounded-lg">
+                <Shield className="h-6 w-6 text-primary" />
+              </div>
+              <h1 className="text-2xl font-bold">LifeVault</h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-muted-foreground hidden sm:block">
+                Welcome, {user.email}
+              </span>
+              <Button variant="outline" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        <main className="container mx-auto px-4 py-8">
+          <EntryList
+            category={selectedCategory}
+            entries={getEntriesForCategory(selectedCategory)}
+            onBack={handleBackToMain}
+            onEdit={handleEditEntry}
+            onDelete={handleDeleteEntry}
+            onAddNew={handleAddNew}
+          />
+        </main>
+
+        {/* Add/Edit Entry Modal */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>
+                {editingEntry ? 'Edit Entry' : 'Add New Entry'}
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="category">Category</Label>
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="medical">Medical</SelectItem>
+                    <SelectItem value="legal">Legal</SelectItem>
+                    <SelectItem value="digital">Digital</SelectItem>
+                    <SelectItem value="personal">Personal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="description">Description (Optional)</Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="file">Upload File</Label>
+                <Input
+                  id="file"
+                  type="file"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  required={!editingEntry}
+                />
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="important"
+                  checked={isImportant}
+                  onCheckedChange={setIsImportant}
+                />
+                <Label htmlFor="important">Mark as Important</Label>
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={resetForm}
+                  disabled={isUploading}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isUploading}>
+                  {isUploading ? 'Saving...' : (editingEntry ? 'Update' : 'Save')}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -173,8 +475,8 @@ const Dashboard = () => {
                   <CardDescription>Health records, medications, emergency contacts</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-muted-foreground">{entries.medical} entries</p>
-                  <Button variant="ghost" className="w-full mt-3">View & Add</Button>
+                  <p className="text-2xl font-bold text-muted-foreground">{entryCounts.medical} entries</p>
+                  <Button variant="ghost" className="w-full mt-3" onClick={() => handleViewEntries('medical')}>View & Add</Button>
                 </CardContent>
               </Card>
 
@@ -187,8 +489,8 @@ const Dashboard = () => {
                   <CardDescription>Wills, insurance, important documents</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-muted-foreground">{entries.legal} entries</p>
-                  <Button variant="ghost" className="w-full mt-3">View & Add</Button>
+                  <p className="text-2xl font-bold text-muted-foreground">{entryCounts.legal} entries</p>
+                  <Button variant="ghost" className="w-full mt-3" onClick={() => handleViewEntries('legal')}>View & Add</Button>
                 </CardContent>
               </Card>
 
@@ -201,8 +503,8 @@ const Dashboard = () => {
                   <CardDescription>Passwords, accounts, digital assets</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-muted-foreground">{entries.digital} entries</p>
-                  <Button variant="ghost" className="w-full mt-3">View & Add</Button>
+                  <p className="text-2xl font-bold text-muted-foreground">{entryCounts.digital} entries</p>
+                  <Button variant="ghost" className="w-full mt-3" onClick={() => handleViewEntries('digital')}>View & Add</Button>
                 </CardContent>
               </Card>
 
@@ -215,8 +517,8 @@ const Dashboard = () => {
                   <CardDescription>Personal information, contacts, notes</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-muted-foreground">{entries.personal} entries</p>
-                  <Button variant="ghost" className="w-full mt-3">View & Add</Button>
+                  <p className="text-2xl font-bold text-muted-foreground">{entryCounts.personal} entries</p>
+                  <Button variant="ghost" className="w-full mt-3" onClick={() => handleViewEntries('personal')}>View & Add</Button>
                 </CardContent>
               </Card>
             </div>
@@ -364,85 +666,85 @@ const Dashboard = () => {
         </Tabs>
       </main>
 
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Add New Entry</h2>
-            <form onSubmit={handleFormSubmit}>
-              <div className="mb-4">
-                <Label htmlFor="location">Choose Location</Label>
-                <select
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full border rounded p-2"
-                  required
-                >
-                  <option value="medical">Medical</option>
-                  <option value="legal">Legal</option>
-                  <option value="digital">Digital</option>
-                  <option value="personal">Personal</option>
-                </select>
-              </div>
-              <div className="mb-4">
-                <Label htmlFor="title">Title</Label>
-                <input
-                  type="text"
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full border rounded p-2"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <Label htmlFor="description">Description (Optional)</Label>
-                <textarea id="description" className="w-full border rounded p-2"></textarea>
-              </div>
-              <div className="mb-4">
-                <Label htmlFor="file">Upload File</Label>
-                <input
-                  type="file"
-                  id="file"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  className="w-full border rounded p-2"
-                  required
-                />
-              </div>
-              <div className="mb-4 flex items-center">
-                <Label htmlFor="important" className="mr-2">Mark as Important</Label>
-                <div
-                  className={`w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer ${
-                    isImportant ? 'bg-green-500' : ''
-                  }`}
-                  onClick={() => setIsImportant(!isImportant)}
-                >
-                  <div
-                    className={`bg-white w-4 h-4 rounded-full shadow-md transform ${
-                      isImportant ? 'translate-x-6' : ''
-                    }`}
-                  ></div>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => setIsModalOpen(false)} 
-                  className="mr-2"
-                  disabled={isUploading}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isUploading}>
-                  {isUploading ? 'Uploading...' : 'Submit'}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Add/Edit Entry Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {editingEntry ? 'Edit Entry' : 'Add New Entry'}
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleFormSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="category">Category</Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="medical">Medical</SelectItem>
+                  <SelectItem value="legal">Legal</SelectItem>
+                  <SelectItem value="digital">Digital</SelectItem>
+                  <SelectItem value="personal">Personal</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="description">Description (Optional)</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="file">Upload File</Label>
+              <Input
+                id="file"
+                type="file"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                required={!editingEntry}
+              />
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="important"
+                checked={isImportant}
+                onCheckedChange={setIsImportant}
+              />
+              <Label htmlFor="important">Mark as Important</Label>
+            </div>
+            
+            <div className="flex justify-end space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetForm}
+                disabled={isUploading}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isUploading}>
+                {isUploading ? 'Saving...' : (editingEntry ? 'Update' : 'Save')}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
