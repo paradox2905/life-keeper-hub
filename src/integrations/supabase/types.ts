@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action_description: string
+          action_type: string
+          category: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          action_description: string
+          action_type: string
+          category: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          action_description?: string
+          action_type?: string
+          category?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      contacts: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_emergency_contact: boolean
+          is_favorite: boolean
+          name: string
+          notes: string | null
+          phone: string | null
+          relationship: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_emergency_contact?: boolean
+          is_favorite?: boolean
+          name: string
+          notes?: string | null
+          phone?: string | null
+          relationship: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_emergency_contact?: boolean
+          is_favorite?: boolean
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          relationship?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       vault_entries: {
         Row: {
           category: string

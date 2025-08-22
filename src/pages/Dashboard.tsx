@@ -14,6 +14,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import EntryList from '@/components/EntryList';
 import EmergencySection from '@/components/EmergencySection';
+import ContactsSection from '@/components/ContactsSection';
+import ActivitySection from '@/components/ActivitySection';
 import { 
   Shield, 
   Users, 
@@ -526,32 +528,7 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="contacts" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-3xl font-bold">Trusted Contacts</h2>
-              <Button className="text-lg px-6 py-3">
-                <Plus className="h-5 w-5 mr-2" />
-                Add Contact
-              </Button>
-            </div>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Emergency Contacts</CardTitle>
-                <CardDescription>
-                  People who can access your vault information in case of emergency
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No contacts added yet</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Add trusted family members or friends who should have emergency access
-                  </p>
-                  <Button>Add Your First Contact</Button>
-                </div>
-              </CardContent>
-            </Card>
+            <ContactsSection />
           </TabsContent>
 
           <TabsContent value="emergency" className="space-y-6">
@@ -560,25 +537,7 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="activity" className="space-y-6">
-            <h2 className="text-3xl font-bold">Activity Log</h2>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>
-                  Track access to your vault and emergency triggers
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <Activity className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No activity yet</h3>
-                  <p className="text-muted-foreground">
-                    Your activity history will appear here
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <ActivitySection />
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">
