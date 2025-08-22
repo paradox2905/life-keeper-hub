@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import EntryList from '@/components/EntryList';
+import EmergencySection from '@/components/EmergencySection';
 import { 
   Shield, 
   Users, 
@@ -555,49 +556,7 @@ const Dashboard = () => {
 
           <TabsContent value="emergency" className="space-y-6">
             <h2 className="text-3xl font-bold">Emergency Settings</h2>
-            
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <AlertTriangle className="h-5 w-5 text-amber-500" />
-                    <span>Inactivity Timer</span>
-                  </CardTitle>
-                  <CardDescription>
-                    Automatically notify contacts if you haven't logged in
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Current setting: Not configured
-                  </p>
-                  <Button variant="outline">Configure Timer</Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Panic Button</CardTitle>
-                  <CardDescription>
-                    Instantly notify your emergency contacts
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-6">
-                    <Button 
-                      variant="destructive" 
-                      size="lg"
-                      className="w-full h-16 text-xl font-bold"
-                    >
-                      🚨 EMERGENCY
-                    </Button>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Hold for 3 seconds to activate
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <EmergencySection />
           </TabsContent>
 
           <TabsContent value="activity" className="space-y-6">

@@ -61,6 +61,22 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				emergency: {
+					DEFAULT: 'hsl(var(--emergency))',
+					foreground: 'hsl(var(--emergency-foreground))'
+				},
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))'
+				},
+				info: {
+					DEFAULT: 'hsl(var(--info))',
+					foreground: 'hsl(var(--info-foreground))'
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))'
 				}
 			},
 			borderRadius: {
@@ -84,11 +100,60 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-glow': {
+					'0%, 100%': {
+						boxShadow: '0 0 20px hsl(var(--emergency) / 0.3)',
+						transform: 'scale(1)'
+					},
+					'50%': {
+						boxShadow: '0 0 40px hsl(var(--emergency) / 0.7)',
+						transform: 'scale(1.05)'
+					}
+				},
+				'heartbeat': {
+					'0%, 50%, 100%': { transform: 'scale(1)' },
+					'25%': { transform: 'scale(1.1)' },
+					'75%': { transform: 'scale(1.05)' }
+				},
+				'ripple': {
+					'0%': {
+						transform: 'scale(0)',
+						opacity: '1'
+					},
+					'100%': {
+						transform: 'scale(4)',
+						opacity: '0'
+					}
+				},
+				'flash': {
+					'0%, 50%, 100%': { opacity: '1' },
+					'25%, 75%': { opacity: '0.5' }
+				},
+				'slide-check': {
+					'0%': { transform: 'translateX(0)' },
+					'50%': { transform: 'translateX(10px)' },
+					'100%': { transform: 'translateX(0)' }
+				},
+				'fade-in': {
+					'0%': { opacity: '0', transform: 'scale(0.8)' },
+					'100%': { opacity: '1', transform: 'scale(1)' }
+				},
+				'hover-glow': {
+					'0%': { boxShadow: '0 0 5px transparent' },
+					'100%': { boxShadow: '0 0 20px hsl(var(--primary) / 0.3)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+				'heartbeat': 'heartbeat 1s ease-in-out infinite',
+				'ripple': 'ripple 0.6s ease-out',
+				'flash': 'flash 0.5s ease-in-out 3',
+				'slide-check': 'slide-check 0.3s ease-in-out',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'hover-glow': 'hover-glow 0.3s ease-out forwards'
 			}
 		}
 	},
