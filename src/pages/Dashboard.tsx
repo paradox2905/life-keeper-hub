@@ -300,26 +300,27 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-background">
         <header className="border-b bg-card">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="bg-primary/10 p-2 rounded-lg">
-                <Shield className="h-6 w-6 text-primary" />
+          <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="bg-primary/10 p-1.5 sm:p-2 rounded-lg">
+                <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               </div>
-              <h1 className="text-2xl font-bold">LifeVault</h1>
+              <h1 className="text-xl sm:text-2xl font-bold">LifeVault</h1>
             </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground hidden sm:block">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
                 Welcome, {user.email}
               </span>
-              <Button variant="outline" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Sign Out</span>
+                <span className="sm:hidden">Out</span>
               </Button>
             </div>
           </div>
         </header>
 
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
           <EntryList
             category={selectedCategory}
             entries={getEntriesForCategory(selectedCategory)}
@@ -416,60 +417,66 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="bg-primary/10 p-2 rounded-lg">
-              <Shield className="h-6 w-6 text-primary" />
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="bg-primary/10 p-1.5 sm:p-2 rounded-lg">
+              <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold">LifeVault</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">LifeVault</h1>
           </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground hidden sm:block">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
               Welcome, {user.email}
             </span>
-            <Button variant="outline" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Sign Out</span>
+              <span className="sm:hidden">Out</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="vault" className="space-y-6">
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 h-auto p-1">
-            <TabsTrigger value="vault" className="flex items-center space-x-2 py-3">
-              <FileText className="h-4 w-4" />
+      <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        <Tabs defaultValue="vault" className="space-y-4 sm:space-y-6">
+          <TabsList className="grid grid-cols-2 md:grid-cols-5 h-auto p-1 w-full">
+            <TabsTrigger value="vault" className="flex items-center justify-center space-x-1 sm:space-x-2 py-2 sm:py-3 text-xs sm:text-sm">
+              <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Vault</span>
+              <span className="sm:hidden">V</span>
             </TabsTrigger>
-            <TabsTrigger value="contacts" className="flex items-center space-x-2 py-3">
-              <Users className="h-4 w-4" />
+            <TabsTrigger value="contacts" className="flex items-center justify-center space-x-1 sm:space-x-2 py-2 sm:py-3 text-xs sm:text-sm">
+              <Users className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Contacts</span>
+              <span className="sm:hidden">C</span>
             </TabsTrigger>
-            <TabsTrigger value="emergency" className="flex items-center space-x-2 py-3">
-              <AlertTriangle className="h-4 w-4" />
+            <TabsTrigger value="emergency" className="flex items-center justify-center space-x-1 sm:space-x-2 py-2 sm:py-3 text-xs sm:text-sm">
+              <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Emergency</span>
+              <span className="sm:hidden">E</span>
             </TabsTrigger>
-            <TabsTrigger value="activity" className="flex items-center space-x-2 py-3">
-              <Activity className="h-4 w-4" />
+            <TabsTrigger value="activity" className="flex items-center justify-center space-x-1 sm:space-x-2 py-2 sm:py-3 text-xs sm:text-sm">
+              <Activity className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Activity</span>
+              <span className="sm:hidden">A</span>
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center space-x-2 py-3">
-              <Settings className="h-4 w-4" />
+            <TabsTrigger value="settings" className="flex items-center justify-center space-x-1 sm:space-x-2 py-2 sm:py-3 text-xs sm:text-sm">
+              <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Settings</span>
+              <span className="sm:hidden">S</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="vault" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-3xl font-bold">Your Secure Vault</h2>
-              <Button className="text-lg px-6 py-3" onClick={() => setIsModalOpen(true)}>
-                <Plus className="h-5 w-5 mr-2" />
+          <TabsContent value="vault" className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <h2 className="text-2xl sm:text-3xl font-bold">Your Secure Vault</h2>
+              <Button className="text-sm sm:text-lg px-4 sm:px-6 py-2 sm:py-3 w-full sm:w-auto" onClick={() => setIsModalOpen(true)}>
+                <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                 Add New Entry
               </Button>
             </div>
             
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center space-x-2">
