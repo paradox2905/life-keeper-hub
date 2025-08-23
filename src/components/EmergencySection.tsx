@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Phone, Mail, Printer, Heart, User, Shield, FileText, QrCode, Check } from 'lucide-react';
+import EmergencyEditDialog from './EmergencyEditDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -29,26 +30,26 @@ const EmergencySection: React.FC = () => {
   const [activeAction, setActiveAction] = useState<string | null>(null);
   const [showQRCode, setShowQRCode] = useState(false);
 
-  // Mock data - replace with real data from your backend
-  const emergencyContact: EmergencyContact = {
+  // Editable data state
+  const [emergencyContact, setEmergencyContact] = useState<EmergencyContact>({
     name: "Dr. Sarah Johnson",
     relationship: "Primary Physician",
     phone: "+1 (555) 123-4567",
     email: "sarah.johnson@hospital.com"
-  };
+  });
 
-  const medicalInfo: MedicalInfo = {
+  const [medicalInfo, setMedicalInfo] = useState<MedicalInfo>({
     bloodGroup: "A+",
     allergies: ["Penicillin", "Shellfish"],
     conditions: ["Type 2 Diabetes", "Hypertension"],
     medications: ["Metformin", "Lisinopril"]
-  };
+  });
 
-  const insuranceInfo: InsuranceInfo = {
+  const [insuranceInfo, setInsuranceInfo] = useState<InsuranceInfo>({
     provider: "HealthCare Plus",
     policyNumber: "HP-2024-789456",
     membershipId: "HC789456123"
-  };
+  });
 
   const handleEmergencyCall = () => {
     setActiveAction('call');
@@ -186,6 +187,13 @@ const EmergencySection: React.FC = () => {
                 Email
               </Button>
             </div>
+            <div className="mt-4">
+              <EmergencyEditDialog
+                type="contact"
+                data={emergencyContact}
+                onSave={setEmergencyContact}
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -221,6 +229,13 @@ const EmergencySection: React.FC = () => {
                 ))}
               </div>
             </div>
+            <div className="mt-4">
+              <EmergencyEditDialog
+                type="medical"
+                data={medicalInfo}
+                onSave={setMedicalInfo}
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -243,6 +258,13 @@ const EmergencySection: React.FC = () => {
             <div>
               <p className="text-sm text-muted-foreground">Member ID</p>
               <p className="font-mono text-sm">{insuranceInfo.membershipId}</p>
+            </div>
+            <div className="mt-4">
+              <EmergencyEditDialog
+                type="insurance"
+                data={insuranceInfo}
+                onSave={setInsuranceInfo}
+              />
             </div>
           </CardContent>
         </Card>

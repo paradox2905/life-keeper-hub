@@ -71,6 +71,12 @@ const ActivitySection: React.FC = () => {
   useEffect(() => {
     if (user) {
       fetchActivities();
+      // Add some sample data if no activities exist
+      setTimeout(() => {
+        if (activities.length === 0) {
+          createSampleActivities();
+        }
+      }, 1000);
     }
   }, [user]);
 
@@ -112,6 +118,67 @@ const ActivitySection: React.FC = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const createSampleActivities = async () => {
+    if (!user) return;
+
+    const sampleActivities = [
+      {
+        action_type: 'create',
+        action_description: 'Created emergency contact information',
+        category: 'emergency',
+        entity_type: 'contact',
+        metadata: { contact_name: 'Dr. Sarah Johnson' }
+      },
+      {
+        action_type: 'update',
+        action_description: 'Updated medical information',
+        category: 'medical',
+        entity_type: 'medical_info',
+        metadata: { fields_updated: ['blood_group', 'allergies'] }
+      },
+      {
+        action_type: 'upload',
+        action_description: 'Uploaded insurance document',
+        category: 'legal',
+        entity_type: 'document',
+        metadata: { document_name: 'insurance_policy.pdf' }
+      },
+      {
+        action_type: 'create',
+        action_description: 'Added new contact',
+        category: 'contact',
+        entity_type: 'contact',
+        metadata: { contact_name: 'John Smith' }
+      },
+      {
+        action_type: 'update',
+        action_description: 'Changed password',
+        category: 'digital',
+        entity_type: 'security',
+        metadata: { security_action: 'password_change' }
+      }
+    ];
+
+    try {
+      for (const activity of sampleActivities) {
+        await supabase.from('activity_logs').insert({
+          user_id: user.id,
+          ...activity
+        });
+      }
+      
+      // Refresh activities after creating samples
+      fetchActivities();
+      
+      toast({
+        title: "Sample Data Added",
+        description: "Added sample activity logs for demonstration.",
+      });
+    } catch (error) {
+      console.error('Error creating sample activities:', error);
     }
   };
 

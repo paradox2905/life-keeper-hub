@@ -16,6 +16,7 @@ import EntryList from '@/components/EntryList';
 import EmergencySection from '@/components/EmergencySection';
 import ContactsSection from '@/components/ContactsSection';
 import ActivitySection from '@/components/ActivitySection';
+import SettingsSection from '@/components/SettingsSection';
 import { 
   Shield, 
   Users, 
@@ -541,45 +542,7 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">
-            <h2 className="text-3xl font-bold">Settings</h2>
-            
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Account Settings</CardTitle>
-                  <CardDescription>
-                    Manage your account and security preferences
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label className="text-sm font-medium">Email</Label>
-                    <p className="text-sm text-muted-foreground">{user.email}</p>
-                  </div>
-                  <Button variant="outline">Change Password</Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Accessibility</CardTitle>
-                  <CardDescription>
-                    Customize the interface for better usability
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button variant="outline" className="w-full justify-start">
-                    Large Text Mode
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    High Contrast
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    Dark Mode
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+            <SettingsSection />
           </TabsContent>
         </Tabs>
       </main>
