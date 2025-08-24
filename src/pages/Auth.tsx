@@ -349,9 +349,16 @@ const Auth = () => {
                         <Input
                           id="signin-phone"
                           type="tel"
-                          placeholder="+1234567890"
+                          placeholder="+91 98765 43210"
                           value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            // Auto-add +91 for Indian numbers if not present
+                            if (value && !value.startsWith('+')) {
+                              value = '+91' + value.replace(/^91/, '');
+                            }
+                            setPhone(value);
+                          }}
                           required
                           disabled={otpSent}
                           className="text-sm sm:text-base"
@@ -483,9 +490,16 @@ const Auth = () => {
                         <Input
                           id="signup-phone"
                           type="tel"
-                          placeholder="+1234567890"
+                          placeholder="+91 98765 43210"
                           value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            // Auto-add +91 for Indian numbers if not present
+                            if (value && !value.startsWith('+')) {
+                              value = '+91' + value.replace(/^91/, '');
+                            }
+                            setPhone(value);
+                          }}
                           required
                           disabled={otpSent}
                           className="text-sm sm:text-base"
