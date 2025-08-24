@@ -98,15 +98,23 @@ const Auth = () => {
     setLoading(true);
     setError('');
     
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      
+      if (error) {
+        if (error.message.includes('Provider not found') || error.message.includes('Provider disabled')) {
+          setError('Google authentication is not configured. Please enable Google provider in Supabase Dashboard > Authentication > Providers.');
+        } else {
+          setError(error.message);
+        }
       }
-    });
-    
-    if (error) {
-      setError(error.message);
+    } catch (err) {
+      setError('Failed to connect with Google. Please check your configuration.');
     }
     setLoading(false);
   };
@@ -125,7 +133,13 @@ const Auth = () => {
       });
       
       if (error) {
-        setError(error.message);
+        if (error.message.includes('otp_disabled') || error.message.includes('Signups not allowed for otp')) {
+          setError('Phone authentication is not configured. Please enable Phone provider and configure SMS in Supabase Dashboard > Authentication > Providers.');
+        } else if (error.message.includes('SMS provider')) {
+          setError('SMS service is not configured. Please set up Twilio or another SMS provider in Supabase Dashboard > Settings > Authentication.');
+        } else {
+          setError(error.message);
+        }
       } else {
         setOtpSent(true);
         setMessage('OTP sent to your phone!');
@@ -162,7 +176,13 @@ const Auth = () => {
       });
       
       if (error) {
-        setError(error.message);
+        if (error.message.includes('otp_disabled') || error.message.includes('Signups not allowed for otp')) {
+          setError('Phone authentication is not configured. Please enable Phone provider and configure SMS in Supabase Dashboard > Authentication > Providers.');
+        } else if (error.message.includes('SMS provider')) {
+          setError('SMS service is not configured. Please set up Twilio or another SMS provider in Supabase Dashboard > Settings > Authentication.');
+        } else {
+          setError(error.message);
+        }
       } else {
         setOtpSent(true);
         setMessage('OTP sent to your phone!');
