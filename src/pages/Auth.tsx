@@ -99,22 +99,21 @@ const Auth = () => {
     setError('');
     
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: `${window.location.origin}/dashboard`
         }
       });
       
       if (error) {
-        if (error.message.includes('Provider not found') || error.message.includes('Provider disabled')) {
-          setError('Google authentication is not configured. Please enable Google provider in Supabase Dashboard > Authentication > Providers.');
-        } else {
-          setError(error.message);
-        }
+        console.error('Google auth error:', error);
+        setError(`Google sign-in failed: ${error.message}`);
       }
+      // If successful, the redirect will happen automatically
     } catch (err) {
-      setError('Failed to connect with Google. Please check your configuration.');
+      console.error('Google auth exception:', err);
+      setError('Google sign-in service unavailable. Please try again.');
     }
     setLoading(false);
   };
@@ -122,27 +121,33 @@ const Auth = () => {
   const handlePhoneSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpSent) {
+      if (!phone.trim()) {
+        setError('Please enter your phone number');
+        return;
+      }
+
       setLoading(true);
       setError('');
       
-      const { error } = await supabase.auth.signInWithOtp({
-        phone,
-        options: {
-          shouldCreateUser: true
-        }
-      });
-      
-      if (error) {
-        if (error.message.includes('otp_disabled') || error.message.includes('Signups not allowed for otp')) {
-          setError('Phone authentication is not configured. Please enable Phone provider and configure SMS in Supabase Dashboard > Authentication > Providers.');
-        } else if (error.message.includes('SMS provider')) {
-          setError('SMS service is not configured. Please set up Twilio or another SMS provider in Supabase Dashboard > Settings > Authentication.');
+      try {
+        // Try signing up with phone, but fallback to sign in
+        const { error } = await supabase.auth.signInWithOtp({
+          phone,
+          options: {
+            shouldCreateUser: true
+          }
+        });
+        
+        if (error) {
+          console.error('Phone signup error:', error);
+          setError(`Phone authentication failed: ${error.message}`);
         } else {
-          setError(error.message);
+          setOtpSent(true);
+          setMessage('OTP sent to your phone!');
         }
-      } else {
-        setOtpSent(true);
-        setMessage('OTP sent to your phone!');
+      } catch (err) {
+        console.error('Phone signup exception:', err);
+        setError('Phone authentication service unavailable. Please try again.');
       }
       setLoading(false);
     } else {
@@ -165,27 +170,32 @@ const Auth = () => {
   const handlePhoneSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpSent) {
+      if (!phone.trim()) {
+        setError('Please enter your phone number');
+        return;
+      }
+
       setLoading(true);
       setError('');
       
-      const { error } = await supabase.auth.signInWithOtp({
-        phone,
-        options: {
-          shouldCreateUser: false
-        }
-      });
-      
-      if (error) {
-        if (error.message.includes('otp_disabled') || error.message.includes('Signups not allowed for otp')) {
-          setError('Phone authentication is not configured. Please enable Phone provider and configure SMS in Supabase Dashboard > Authentication > Providers.');
-        } else if (error.message.includes('SMS provider')) {
-          setError('SMS service is not configured. Please set up Twilio or another SMS provider in Supabase Dashboard > Settings > Authentication.');
+      try {
+        const { error } = await supabase.auth.signInWithOtp({
+          phone,
+          options: {
+            shouldCreateUser: false
+          }
+        });
+        
+        if (error) {
+          console.error('Phone signin error:', error);
+          setError(`Phone sign-in failed: ${error.message}`);
         } else {
-          setError(error.message);
+          setOtpSent(true);
+          setMessage('OTP sent to your phone!');
         }
-      } else {
-        setOtpSent(true);
-        setMessage('OTP sent to your phone!');
+      } catch (err) {
+        console.error('Phone signin exception:', err);
+        setError('Phone authentication service unavailable. Please try again.');
       }
       setLoading(false);
     } else {
