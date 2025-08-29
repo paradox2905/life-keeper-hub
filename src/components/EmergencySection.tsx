@@ -138,52 +138,52 @@ const EmergencySection: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Emergency Button */}
-      <div className="flex justify-center">
+      <div className="flex justify-center px-4">
         <button
           onClick={handleEmergencyCall}
-          className="relative w-48 h-48 rounded-full bg-emergency text-emergency-foreground font-bold text-xl transition-all duration-300 hover:scale-105 animate-pulse-glow shadow-2xl"
+          className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full bg-emergency text-emergency-foreground font-bold text-base sm:text-lg md:text-xl transition-all duration-300 hover:scale-105 animate-pulse-glow shadow-2xl"
           disabled={activeAction !== null}
         >
           <div className="flex flex-col items-center justify-center h-full animate-heartbeat">
-            <Heart className="w-12 h-12 mb-2" />
-            <span>EMERGENCY</span>
-            <span className="text-sm font-normal">Tap to Call</span>
+            <Heart className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 mb-1 sm:mb-2" />
+            <span className="text-sm sm:text-base md:text-lg">EMERGENCY</span>
+            <span className="text-xs sm:text-sm font-normal">Tap to Call</span>
           </div>
         </button>
       </div>
 
       {/* Emergency Info Panels */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 px-2 sm:px-0">
         {/* Primary Emergency Contact */}
-        <Card className="transition-all duration-300 hover:shadow-lg hover:scale-105">
+        <Card className="transition-all duration-300 hover:shadow-lg hover:scale-105 sm:col-span-2 lg:col-span-1">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <User className="w-5 h-5 text-emergency" />
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <User className="w-4 h-4 sm:w-5 sm:h-5 text-emergency" />
               Emergency Contact
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
-              <p className="font-semibold">{emergencyContact.name}</p>
-              <p className="text-sm text-muted-foreground">{emergencyContact.relationship}</p>
+              <p className="font-semibold text-sm sm:text-base">{emergencyContact.name}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">{emergencyContact.relationship}</p>
             </div>
             <div className="flex gap-2">
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => window.open(`tel:${emergencyContact.phone}`)}
-                className="flex-1 hover:bg-success hover:text-success-foreground transition-colors"
+                className="flex-1 hover:bg-success hover:text-success-foreground transition-colors text-xs sm:text-sm"
               >
-                <Phone className="w-4 h-4 mr-1" />
+                <Phone className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                 Call
               </Button>
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => window.open(`mailto:${emergencyContact.email}`)}
-                className="flex-1 hover:bg-info hover:text-info-foreground transition-colors"
+                className="flex-1 hover:bg-info hover:text-info-foreground transition-colors text-xs sm:text-sm"
               >
-                <Mail className="w-4 h-4 mr-1" />
+                <Mail className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                 Email
               </Button>
             </div>
@@ -200,17 +200,17 @@ const EmergencySection: React.FC = () => {
         {/* Medical Details */}
         <Card className="transition-all duration-300 hover:shadow-lg hover:scale-105">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Heart className="w-5 h-5 text-emergency" />
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-emergency" />
               Medical Info
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
-              <p className="font-semibold text-emergency">Blood Group: {medicalInfo.bloodGroup}</p>
+              <p className="font-semibold text-emergency text-sm sm:text-base">Blood Group: {medicalInfo.bloodGroup}</p>
             </div>
             <div>
-              <p className="text-sm font-medium">Allergies:</p>
+              <p className="text-xs sm:text-sm font-medium">Allergies:</p>
               <div className="flex flex-wrap gap-1">
                 {medicalInfo.allergies.map((allergy, index) => (
                   <span key={index} className="px-2 py-1 bg-destructive/10 text-destructive text-xs rounded-full">
@@ -220,7 +220,7 @@ const EmergencySection: React.FC = () => {
               </div>
             </div>
             <div>
-              <p className="text-sm font-medium">Conditions:</p>
+              <p className="text-xs sm:text-sm font-medium">Conditions:</p>
               <div className="flex flex-wrap gap-1">
                 {medicalInfo.conditions.map((condition, index) => (
                   <span key={index} className="px-2 py-1 bg-warning/10 text-warning text-xs rounded-full">
@@ -242,22 +242,22 @@ const EmergencySection: React.FC = () => {
         {/* Insurance Info */}
         <Card className="transition-all duration-300 hover:shadow-lg hover:scale-105">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Shield className="w-5 h-5 text-info" />
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-info" />
               Insurance
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
-              <p className="font-semibold">{insuranceInfo.provider}</p>
+              <p className="font-semibold text-sm sm:text-base">{insuranceInfo.provider}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Policy #</p>
-              <p className="font-mono text-sm">{insuranceInfo.policyNumber}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Policy #</p>
+              <p className="font-mono text-xs sm:text-sm break-all">{insuranceInfo.policyNumber}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Member ID</p>
-              <p className="font-mono text-sm">{insuranceInfo.membershipId}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Member ID</p>
+              <p className="font-mono text-xs sm:text-sm break-all">{insuranceInfo.membershipId}</p>
             </div>
             <div className="mt-4">
               <EmergencyEditDialog
@@ -271,7 +271,7 @@ const EmergencySection: React.FC = () => {
       </div>
 
       {/* Quick Action Buttons */}
-      <div className="flex flex-wrap justify-center gap-4">
+      <div className="flex flex-wrap justify-center gap-2 sm:gap-4 px-2 sm:px-0">
         <ActionButton
           onClick={handleEmergencyCall}
           icon={<Phone className="w-5 h-5" />}
@@ -296,28 +296,28 @@ const EmergencySection: React.FC = () => {
       </div>
 
       {/* QR Code Export */}
-      <div className="flex justify-center">
+      <div className="flex justify-center px-2 sm:px-0">
         {!showQRCode ? (
           <Button
             onClick={handleShowQRCode}
             variant="outline"
-            className="hover:animate-hover-glow transition-all duration-300"
+            className="hover:animate-hover-glow transition-all duration-300 w-full sm:w-auto"
           >
-            <QrCode className="w-5 h-5 mr-2" />
-            Generate Emergency QR Code
+            <QrCode className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+            <span className="text-sm sm:text-base">Generate Emergency QR Code</span>
           </Button>
         ) : (
-          <Card className="animate-fade-in">
-            <CardContent className="p-6 text-center">
-              <div className="w-32 h-32 mx-auto mb-4 bg-muted rounded-lg flex items-center justify-center">
-                <QrCode className="w-20 h-20 text-muted-foreground" />
+          <Card className="animate-fade-in w-full max-w-sm">
+            <CardContent className="p-4 sm:p-6 text-center">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4 bg-muted rounded-lg flex items-center justify-center">
+                <QrCode className="w-16 h-16 sm:w-20 sm:h-20 text-muted-foreground" />
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Scan to access emergency profile
               </p>
               <div className="flex items-center justify-center mt-2 text-success">
-                <Check className="w-4 h-4 mr-1" />
-                <span className="text-sm">QR Code Generated</span>
+                <Check className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                <span className="text-xs sm:text-sm">QR Code Generated</span>
               </div>
             </CardContent>
           </Card>

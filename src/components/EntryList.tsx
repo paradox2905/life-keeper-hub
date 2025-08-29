@@ -157,66 +157,74 @@ const EntryList: React.FC<EntryListProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={onBack}>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+          <Button variant="outline" onClick={onBack} className="w-fit">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Vault
+            <span className="hidden sm:inline">Back to Vault</span>
+            <span className="sm:hidden">Back</span>
           </Button>
-          <h2 className="text-3xl font-bold capitalize">{category} Entries</h2>
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold capitalize">{category} Entries</h2>
         </div>
-        <Button onClick={onAddNew}>
-          <Plus className="h-5 w-5 mr-2" />
-          Add New Entry
+        <Button onClick={onAddNew} className="w-full sm:w-auto">
+          <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+          <span className="hidden sm:inline">Add New Entry</span>
+          <span className="sm:hidden">Add Entry</span>
         </Button>
       </div>
 
       {entries.length === 0 ? (
         <Card>
-          <CardContent className="text-center py-12">
-            <p className="text-muted-foreground mb-4">No entries found in this category.</p>
-            <Button onClick={onAddNew}>Add Your First Entry</Button>
+          <CardContent className="text-center py-8 sm:py-12 px-4">
+            <p className="text-muted-foreground mb-4 text-sm sm:text-base">No entries found in this category.</p>
+            <Button onClick={onAddNew} className="w-full sm:w-auto">Add Your First Entry</Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {entries.map((entry) => (
             <Card key={entry.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-lg font-semibold">{entry.title}</h3>
+              <CardContent className="p-3 sm:p-4 lg:p-6">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-0">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                      <h3 className="text-base sm:text-lg font-semibold truncate pr-2">{entry.title}</h3>
                       {entry.is_important && (
-                        <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
+                        <span className="bg-warning/10 text-warning text-xs px-2 py-1 rounded-full w-fit">
                           Important
                         </span>
                       )}
                     </div>
                     {entry.description && (
-                      <p className="text-muted-foreground mb-2">{entry.description}</p>
+                      <p className="text-muted-foreground mb-2 text-sm sm:text-base line-clamp-2">{entry.description}</p>
                     )}
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                      <span>{entry.file_name}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+                      <span className="truncate">{entry.file_name}</span>
+                      <span className="hidden sm:inline">•</span>
                       <span>{formatFileSize(entry.file_size)}</span>
+                      <span className="hidden sm:inline">•</span>
                       <span>Added {formatDate(entry.created_at)}</span>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-end gap-2 flex-shrink-0">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => onEdit(entry)}
+                      className="p-2"
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                      <span className="sr-only">Edit</span>
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleDownload(entry)}
+                      className="p-2"
                     >
-                      <Download className="h-4 w-4" />
+                      <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+                      <span className="sr-only">Download</span>
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
@@ -224,23 +232,25 @@ const EntryList: React.FC<EntryListProps> = ({
                           variant="outline"
                           size="sm"
                           disabled={isDeleting === entry.id}
+                          className="p-2"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="sr-only">Delete</span>
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="max-w-sm sm:max-w-md">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
+                          <AlertDialogTitle className="text-lg sm:text-xl">Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-sm sm:text-base">
                             This will permanently delete "{entry.title}" and remove the file from storage.
                             This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                          <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDeleteConfirm(entry.id)}
-                            className="bg-destructive text-destructive-foreground"
+                            className="bg-destructive text-destructive-foreground w-full sm:w-auto"
                           >
                             Delete
                           </AlertDialogAction>

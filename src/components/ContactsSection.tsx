@@ -373,12 +373,12 @@ const ContactsSection: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Bar */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <h2 className="text-3xl font-bold">Trusted Contacts</h2>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-2 sm:px-0">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">Trusted Contacts</h2>
         
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
           {/* Search Bar */}
-          <div className={`relative transition-all duration-300 ${isSearchExpanded ? 'w-64' : 'w-10'}`}>
+          <div className={`relative transition-all duration-300 ${isSearchExpanded ? 'w-full sm:w-64' : 'w-10'} order-2 sm:order-1`}>
             <Search 
               className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-pointer" 
               onClick={() => setIsSearchExpanded(!isSearchExpanded)}
@@ -393,50 +393,53 @@ const ContactsSection: React.FC = () => {
             />
           </div>
 
-          {/* Filter Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="hover:animate-hover-glow">
-                <Filter className="h-4 w-4 mr-2" />
-                Filter
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="z-50 bg-popover border border-border">
-              <DropdownMenuItem onClick={() => setFilterBy('all')}>All Contacts</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterBy('favorites')}>Favorites</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterBy('recent')}>Recent</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterBy('family')}>Family</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterBy('doctor')}>Doctor</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterBy('lawyer')}>Lawyer</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterBy('friend')}>Friend</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterBy('work')}>Work</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex gap-2 order-1 sm:order-2">
+            {/* Filter Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="hover:animate-hover-glow flex-1 sm:flex-none">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Filter</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="z-50 bg-popover border border-border">
+                <DropdownMenuItem onClick={() => setFilterBy('all')}>All Contacts</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterBy('favorites')}>Favorites</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterBy('recent')}>Recent</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterBy('family')}>Family</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterBy('doctor')}>Doctor</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterBy('lawyer')}>Lawyer</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterBy('friend')}>Friend</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterBy('work')}>Work</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          {/* Add Contact Button */}
-          <Button onClick={() => setIsModalOpen(true)} className="hover:animate-hover-glow">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Contact
-          </Button>
+            {/* Add Contact Button */}
+            <Button onClick={() => setIsModalOpen(true)} className="hover:animate-hover-glow flex-1 sm:flex-none">
+              <Plus className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Add Contact</span>
+              <span className="sm:hidden">Add</span>
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 sm:gap-6">
         {/* Contacts Grid */}
-        <div className="lg:col-span-3">
+        <div className="xl:col-span-3">
           {filteredContacts.length === 0 ? (
             <Card>
-              <CardContent className="text-center py-12">
-                <User className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No contacts found</h3>
-                <p className="text-muted-foreground mb-4">
+              <CardContent className="text-center py-8 sm:py-12 px-4">
+                <User className="h-8 w-8 sm:h-12 sm:w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-base sm:text-lg font-semibold mb-2">No contacts found</h3>
+                <p className="text-sm sm:text-base text-muted-foreground mb-4">
                   {searchQuery ? 'Try adjusting your search or filters' : 'Add trusted family members or friends'}
                 </p>
-                <Button onClick={() => setIsModalOpen(true)}>Add Your First Contact</Button>
+                <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">Add Your First Contact</Button>
               </CardContent>
             </Card>
           ) : (
-            <div className={`grid gap-4 ${viewMode === 'grid' ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
+            <div className={`grid gap-3 sm:gap-4 ${viewMode === 'grid' ? 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2' : 'grid-cols-1'}`}>
               {filteredContacts.map((contact) => (
                 <Card 
                   key={contact.id} 

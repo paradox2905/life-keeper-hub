@@ -539,8 +539,8 @@ const Dashboard = () => {
             <ContactsSection />
           </TabsContent>
 
-          <TabsContent value="emergency" className="space-y-6">
-            <h2 className="text-3xl font-bold">Emergency Settings</h2>
+          <TabsContent value="emergency" className="space-y-4 sm:space-y-6">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold px-2 sm:px-0">Emergency Settings</h2>
             <EmergencySection />
           </TabsContent>
 
@@ -556,17 +556,17 @@ const Dashboard = () => {
 
       {/* Add/Edit Entry Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="mx-4 max-w-sm sm:mx-auto sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">
               {editingEntry ? 'Edit Entry' : 'Add New Entry'}
             </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleFormSubmit} className="space-y-4">
+          <form onSubmit={handleFormSubmit} className="space-y-3 sm:space-y-4">
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category" className="text-sm">Category</Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger>
+                <SelectTrigger className="text-sm sm:text-base">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -579,32 +579,35 @@ const Dashboard = () => {
             </div>
             
             <div>
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title" className="text-sm">Title</Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
+                className="text-sm sm:text-base"
               />
             </div>
             
             <div>
-              <Label htmlFor="description">Description (Optional)</Label>
+              <Label htmlFor="description" className="text-sm">Description (Optional)</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
+                className="text-sm sm:text-base"
               />
             </div>
             
             <div>
-              <Label htmlFor="file">Upload File</Label>
+              <Label htmlFor="file" className="text-sm">Upload File</Label>
               <Input
                 id="file"
                 type="file"
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
                 required={!editingEntry}
+                className="text-sm sm:text-base"
               />
             </div>
             
@@ -614,19 +617,20 @@ const Dashboard = () => {
                 checked={isImportant}
                 onCheckedChange={setIsImportant}
               />
-              <Label htmlFor="important">Mark as Important</Label>
+              <Label htmlFor="important" className="text-sm">Mark as Important</Label>
             </div>
             
-            <div className="flex justify-end space-x-2">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-2 sm:space-y-0 space-y-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={resetForm}
                 disabled={isUploading}
+                className="w-full sm:w-auto text-sm"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isUploading}>
+              <Button type="submit" disabled={isUploading} className="w-full sm:w-auto text-sm">
                 {isUploading ? 'Saving...' : (editingEntry ? 'Update' : 'Save')}
               </Button>
             </div>

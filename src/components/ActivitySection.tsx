@@ -356,44 +356,44 @@ const ActivitySection: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold">Activity Log</h2>
+      <div className="flex items-center justify-between px-2 sm:px-0">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">Activity Log</h2>
       </div>
 
       {/* Analytics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 px-2 sm:px-0">
         <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Updates</p>
-                <p className="text-3xl font-bold">{analytics.totalUpdates}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">Total Updates</p>
+                <p className="text-2xl sm:text-3xl font-bold">{analytics.totalUpdates}</p>
               </div>
-              <BarChart3 className="h-8 w-8 text-primary" />
+              <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">This Month</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">This Month</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-3xl font-bold animate-fade-in">{analytics.thisMonth}</p>
-                  <TrendingUp className="h-5 w-5 text-success" />
+                  <p className="text-2xl sm:text-3xl font-bold animate-fade-in">{analytics.thisMonth}</p>
+                  <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-success" />
                 </div>
               </div>
-              <ActivityIcon className="h-8 w-8 text-success" />
+              <ActivityIcon className="h-6 w-6 sm:h-8 sm:w-8 text-success" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardContent className="p-6">
+        <Card className="transition-all duration-300 hover:shadow-lg sm:col-span-2 lg:col-span-1">
+          <CardContent className="p-4 sm:p-6">
             <div>
-              <p className="text-sm font-medium text-muted-foreground mb-3">Weekly Trend</p>
-              <div className="flex items-end gap-2 h-8">
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-3">Weekly Trend</p>
+              <div className="flex items-end gap-2 h-6 sm:h-8">
                 {analytics.weeklyTrend.map((count, index) => (
                   <div
                     key={index}
@@ -403,17 +403,21 @@ const ActivitySection: React.FC = () => {
                       animationDelay: `${index * 0.1}s`
                     }}
                   >
-                    <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 text-xs text-muted-foreground">
+                    <div className="absolute -top-4 sm:-top-5 left-1/2 transform -translate-x-1/2 text-xs text-muted-foreground">
                       {count}
                     </div>
                   </div>
                 ))}
               </div>
               <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                <span>4w ago</span>
-                <span>3w ago</span>
-                <span>2w ago</span>
-                <span>1w ago</span>
+                <span className="hidden sm:inline">4w ago</span>
+                <span className="sm:hidden">4w</span>
+                <span className="hidden sm:inline">3w ago</span>
+                <span className="sm:hidden">3w</span>
+                <span className="hidden sm:inline">2w ago</span>
+                <span className="sm:hidden">2w</span>
+                <span className="hidden sm:inline">1w ago</span>
+                <span className="sm:hidden">1w</span>
               </div>
             </div>
           </CardContent>
@@ -426,18 +430,18 @@ const ActivitySection: React.FC = () => {
           <CardTitle>Activity by Category</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
             {Object.entries(analytics.categoryBreakdown).map(([category, count]) => {
               const Icon = categoryIcons[category as keyof typeof categoryIcons];
               return (
                 <div
                   key={category}
-                  className="text-center p-3 rounded-lg bg-muted/50 transition-all duration-300 hover:scale-105 hover:shadow-md cursor-pointer"
+                  className="text-center p-2 sm:p-3 rounded-lg bg-muted/50 transition-all duration-300 hover:scale-105 hover:shadow-md cursor-pointer"
                   onClick={() => handleFilterClick(category)}
                 >
-                  <Icon className="h-8 w-8 mx-auto mb-2 text-primary" />
-                  <p className="text-sm font-medium capitalize">{category}</p>
-                  <p className="text-2xl font-bold text-muted-foreground">{count}</p>
+                  <Icon className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-1 sm:mb-2 text-primary" />
+                  <p className="text-xs sm:text-sm font-medium capitalize">{category}</p>
+                  <p className="text-lg sm:text-2xl font-bold text-muted-foreground">{count}</p>
                 </div>
               );
             })}
@@ -446,8 +450,8 @@ const ActivitySection: React.FC = () => {
       </Card>
 
       {/* Filters and Controls */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between px-2 sm:px-0">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">Category:</span>
@@ -471,9 +475,9 @@ const ActivitySection: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
           <Select value={selectedTimeRange} onValueChange={setSelectedTimeRange}>
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-full sm:w-32">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

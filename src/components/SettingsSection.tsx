@@ -157,45 +157,45 @@ const SettingsSection: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3 mb-6">
-        <Settings className="w-8 h-8 text-primary" />
-        <h2 className="text-3xl font-bold">Settings</h2>
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
+      <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+        <Settings className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">Settings</h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Profile Settings */}
         <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5 text-primary" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <User className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               Profile Information
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div>
-              <Label htmlFor="displayName">Display Name</Label>
+              <Label htmlFor="displayName" className="text-sm">Display Name</Label>
               <Input
                 id="displayName"
                 value={profileData.displayName}
                 onChange={(e) => setProfileData(prev => ({ ...prev, displayName: e.target.value }))}
-                className="mt-1"
+                className="mt-1 text-sm sm:text-base"
               />
             </div>
             <div>
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email" className="text-sm">Email Address</Label>
               <Input
                 id="email"
                 type="email"
                 value={profileData.email}
                 disabled
-                className="mt-1 bg-muted"
+                className="mt-1 bg-muted text-sm sm:text-base"
               />
               <p className="text-xs text-muted-foreground mt-1">
                 Contact support to change your email address
               </p>
             </div>
-            <Button onClick={handleProfileUpdate} className="w-full">
+            <Button onClick={handleProfileUpdate} className="w-full text-sm sm:text-base">
               Update Profile
             </Button>
           </CardContent>
@@ -203,76 +203,76 @@ const SettingsSection: React.FC = () => {
 
         {/* Password Settings */}
         <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lock className="w-5 h-5 text-primary" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               Change Password
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div>
-              <Label htmlFor="currentPassword">Current Password</Label>
+              <Label htmlFor="currentPassword" className="text-sm">Current Password</Label>
               <div className="relative">
                 <Input
                   id="currentPassword"
                   type={showPasswords.current ? "text" : "password"}
                   value={passwordData.currentPassword}
                   onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                  className="mt-1 pr-10"
+                  className="mt-1 pr-10 text-sm sm:text-base"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPasswords(prev => ({ ...prev, current: !prev.current }))}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPasswords.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPasswords.current ? <EyeOff className="w-3 h-3 sm:w-4 sm:h-4" /> : <Eye className="w-3 h-3 sm:w-4 sm:h-4" />}
                 </button>
               </div>
             </div>
             
             <div>
-              <Label htmlFor="newPassword">New Password</Label>
+              <Label htmlFor="newPassword" className="text-sm">New Password</Label>
               <div className="relative">
                 <Input
                   id="newPassword"
                   type={showPasswords.new ? "text" : "password"}
                   value={passwordData.newPassword}
                   onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                  className="mt-1 pr-10"
+                  className="mt-1 pr-10 text-sm sm:text-base"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPasswords(prev => ({ ...prev, new: !prev.new }))}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPasswords.new ? <EyeOff className="w-3 h-3 sm:w-4 sm:h-4" /> : <Eye className="w-3 h-3 sm:w-4 sm:h-4" />}
                 </button>
               </div>
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Label htmlFor="confirmPassword" className="text-sm">Confirm New Password</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
                   type={showPasswords.confirm ? "text" : "password"}
                   value={passwordData.confirmPassword}
                   onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  className="mt-1 pr-10"
+                  className="mt-1 pr-10 text-sm sm:text-base"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPasswords.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPasswords.confirm ? <EyeOff className="w-3 h-3 sm:w-4 sm:h-4" /> : <Eye className="w-3 h-3 sm:w-4 sm:h-4" />}
                 </button>
               </div>
             </div>
 
             <Button 
               onClick={handlePasswordChange} 
-              className="w-full" 
+              className="w-full text-sm sm:text-base" 
               disabled={isChangingPassword || !passwordData.newPassword || !passwordData.confirmPassword}
             >
               {isChangingPassword ? "Changing Password..." : "Change Password"}
@@ -282,17 +282,17 @@ const SettingsSection: React.FC = () => {
 
         {/* Notification Settings */}
         <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bell className="w-5 h-5 text-primary" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               Notifications
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Email Notifications</Label>
-                <p className="text-sm text-muted-foreground">Receive important updates via email</p>
+          <CardContent className="space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <Label className="text-sm">Email Notifications</Label>
+                <p className="text-xs sm:text-sm text-muted-foreground">Receive important updates via email</p>
               </div>
               <Switch
                 checked={notifications.emailNotifications}
@@ -302,10 +302,10 @@ const SettingsSection: React.FC = () => {
             
             <Separator />
             
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Emergency Alerts</Label>
-                <p className="text-sm text-muted-foreground">Critical emergency notifications</p>
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <Label className="text-sm">Emergency Alerts</Label>
+                <p className="text-xs sm:text-sm text-muted-foreground">Critical emergency notifications</p>
               </div>
               <Switch
                 checked={notifications.emergencyAlerts}
@@ -315,10 +315,10 @@ const SettingsSection: React.FC = () => {
 
             <Separator />
 
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Document Reminders</Label>
-                <p className="text-sm text-muted-foreground">Reminders for document updates</p>
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <Label className="text-sm">Document Reminders</Label>
+                <p className="text-xs sm:text-sm text-muted-foreground">Reminders for document updates</p>
               </div>
               <Switch
                 checked={notifications.documentReminders}
@@ -328,10 +328,10 @@ const SettingsSection: React.FC = () => {
 
             <Separator />
 
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Weekly Reports</Label>
-                <p className="text-sm text-muted-foreground">Weekly activity summaries</p>
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <Label className="text-sm">Weekly Reports</Label>
+                <p className="text-xs sm:text-sm text-muted-foreground">Weekly activity summaries</p>
               </div>
               <Switch
                 checked={notifications.weeklyReports}
@@ -343,17 +343,17 @@ const SettingsSection: React.FC = () => {
 
         {/* Privacy & Security */}
         <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-primary" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               Privacy & Security
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Profile Visibility</Label>
-                <p className="text-sm text-muted-foreground">Make profile visible to others</p>
+          <CardContent className="space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <Label className="text-sm">Profile Visibility</Label>
+                <p className="text-xs sm:text-sm text-muted-foreground">Make profile visible to others</p>
               </div>
               <Switch
                 checked={privacy.profileVisibility}
@@ -363,10 +363,10 @@ const SettingsSection: React.FC = () => {
             
             <Separator />
             
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Data Sharing</Label>
-                <p className="text-sm text-muted-foreground">Allow data sharing for improvements</p>
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <Label className="text-sm">Data Sharing</Label>
+                <p className="text-xs sm:text-sm text-muted-foreground">Allow data sharing for improvements</p>
               </div>
               <Switch
                 checked={privacy.dataSharing}
@@ -376,10 +376,10 @@ const SettingsSection: React.FC = () => {
 
             <Separator />
 
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Analytics Tracking</Label>
-                <p className="text-sm text-muted-foreground">Help improve the app with usage data</p>
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <Label className="text-sm">Analytics Tracking</Label>
+                <p className="text-xs sm:text-sm text-muted-foreground">Help improve the app with usage data</p>
               </div>
               <Switch
                 checked={privacy.analyticsTracking}
@@ -392,33 +392,35 @@ const SettingsSection: React.FC = () => {
 
       {/* Data Management */}
       <Card className="transition-all duration-300 hover:shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Download className="w-5 h-5 text-primary" />
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <Download className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             Data Management
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Button
               onClick={handleDataExport}
               variant="outline"
-              className="flex-1 hover:animate-hover-glow"
+              className="flex-1 hover:animate-hover-glow text-sm sm:text-base"
             >
-              <Download className="w-4 h-4 mr-2" />
-              Export All Data
+              <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+              <span className="hidden sm:inline">Export All Data</span>
+              <span className="sm:hidden">Export Data</span>
             </Button>
             
             <Button
               onClick={handleAccountDeletion}
               variant="destructive"
-              className="flex-1"
+              className="flex-1 text-sm sm:text-base"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete Account
+              <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+              <span className="hidden sm:inline">Delete Account</span>
+              <span className="sm:hidden">Delete</span>
             </Button>
           </div>
-          <p className="text-sm text-muted-foreground mt-4">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-3 sm:mt-4">
             Export your data or permanently delete your account. Account deletion cannot be undone.
           </p>
         </CardContent>
