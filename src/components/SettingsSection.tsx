@@ -189,18 +189,27 @@ const SettingsSection: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
-      <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-        <Settings className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">Settings</h2>
+    <div className="space-y-6 sm:space-y-8 px-2 sm:px-0">
+      <div className="flex items-center gap-3 mb-6 sm:mb-8">
+        <div className="bg-gradient-to-br from-primary/20 to-primary/10 p-2 sm:p-3 rounded-xl">
+          <Settings className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+        </div>
+        <div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+            Settings
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">Manage your account and preferences</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Profile Settings */}
-        <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <User className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+        <Card className="transition-all duration-500 hover:shadow-xl hover:shadow-primary/5 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+          <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-transparent rounded-t-lg">
+            <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-2 rounded-lg">
+                <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              </div>
               Profile Information
             </CardTitle>
           </CardHeader>
@@ -234,10 +243,12 @@ const SettingsSection: React.FC = () => {
         </Card>
 
         {/* Password Settings */}
-        <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+        <Card className="transition-all duration-500 hover:shadow-xl hover:shadow-primary/5 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+          <CardHeader className="pb-4 bg-gradient-to-r from-amber-500/5 to-transparent rounded-t-lg">
+            <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
+              <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-2 rounded-lg">
+                <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              </div>
               Change Password
             </CardTitle>
           </CardHeader>
@@ -313,10 +324,12 @@ const SettingsSection: React.FC = () => {
         </Card>
 
         {/* Notification Settings */}
-        <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+        <Card className="transition-all duration-500 hover:shadow-xl hover:shadow-primary/5 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+          <CardHeader className="pb-4 bg-gradient-to-r from-green-500/5 to-transparent rounded-t-lg">
+            <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
+              <div className="bg-gradient-to-br from-green-500 to-green-600 p-2 rounded-lg">
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              </div>
               Notifications
             </CardTitle>
           </CardHeader>
@@ -374,10 +387,12 @@ const SettingsSection: React.FC = () => {
         </Card>
 
         {/* Appearance & Theme */}
-        <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Palette className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+        <Card className="transition-all duration-500 hover:shadow-xl hover:shadow-primary/5 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+          <CardHeader className="pb-4 bg-gradient-to-r from-purple-500/5 to-transparent rounded-t-lg">
+            <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-2 rounded-lg">
+                <Palette className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              </div>
               Appearance
             </CardTitle>
           </CardHeader>
@@ -415,10 +430,12 @@ const SettingsSection: React.FC = () => {
         </Card>
 
         {/* Privacy & Security */}
-        <Card className="transition-all duration-300 hover:shadow-lg">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+        <Card className="transition-all duration-500 hover:shadow-xl hover:shadow-primary/5 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+          <CardHeader className="pb-4 bg-gradient-to-r from-red-500/5 to-transparent rounded-t-lg">
+            <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
+              <div className="bg-gradient-to-br from-red-500 to-red-600 p-2 rounded-lg">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              </div>
               Privacy & Security
             </CardTitle>
           </CardHeader>
@@ -464,10 +481,12 @@ const SettingsSection: React.FC = () => {
       </div>
 
       {/* Data Management */}
-      <Card className="transition-all duration-300 hover:shadow-lg">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-            <Download className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+      <Card className="transition-all duration-500 hover:shadow-xl hover:shadow-primary/5 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+        <CardHeader className="pb-4 bg-gradient-to-r from-indigo-500/5 to-transparent rounded-t-lg">
+          <CardTitle className="flex items-center gap-3 text-lg sm:text-xl">
+            <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-2 rounded-lg">
+              <Download className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </div>
             Data Management
           </CardTitle>
         </CardHeader>
@@ -476,7 +495,7 @@ const SettingsSection: React.FC = () => {
             <Button
               onClick={handleDataExport}
               variant="outline"
-              className="flex-1 hover:animate-hover-glow text-sm sm:text-base"
+              className="flex-1 text-sm sm:text-base bg-gradient-to-r from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 border-indigo-200 hover:border-indigo-300 text-indigo-700 hover:text-indigo-800 transition-all duration-300"
             >
               <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
               <span className="hidden sm:inline">Export All Data</span>
@@ -486,7 +505,7 @@ const SettingsSection: React.FC = () => {
             <Button
               onClick={() => setShowDeleteDialog(true)}
               variant="destructive"
-              className="flex-1 text-sm sm:text-base"
+              className="flex-1 text-sm sm:text-base bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg hover:shadow-red-500/25 transition-all duration-300"
             >
               <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
               <span className="hidden sm:inline">Delete Account</span>

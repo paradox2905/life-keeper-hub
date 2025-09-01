@@ -45,6 +45,21 @@ export const UserProfileProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setLoading(false);
   }, [user]);
 
+  // Listen for auth state changes to refresh profile
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'USER_UPDATED' && session?.user) {
+        const displayName = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || '';
+        setProfile({
+          displayName,
+          email: session.user.email || '',
+        });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const updateDisplayName = async (newName: string) => {
     if (!user) return;
 
