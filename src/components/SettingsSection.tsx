@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, User, Lock, Bell, Shield, Palette, Download, Trash2, Eye, EyeOff, Sun, Moon, Monitor } from 'lucide-react';
+import { Settings, User, Lock, Bell, Shield, Palette, Download, Trash2, Eye, EyeOff, Sun, Moon, Monitor, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserProfile } from '@/contexts/UserProfileContext';
@@ -149,12 +150,42 @@ const SettingsSection: React.FC = () => {
     }, 3000);
   };
 
-  const handleAccountDeletion = () => {
-    toast({
-      title: "Account Deletion",
-      description: "Please contact support to delete your account.",
-      variant: "destructive",
-    });
+  // Account deletion
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleAccountDeletion = async () => {
+    setIsDeleting(true);
+    
+    try {
+      const { error } = await supabase.rpc('delete_user');
+      
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to delete account. Please contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Sign out the user
+      await supabase.auth.signOut();
+      
+      toast({
+        title: "Account Deleted",
+        description: "Your account has been permanently deleted.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error", 
+        description: "Failed to delete account. Please contact support.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+    }
   };
 
   return (
@@ -453,7 +484,7 @@ const SettingsSection: React.FC = () => {
             </Button>
             
             <Button
-              onClick={handleAccountDeletion}
+              onClick={() => setShowDeleteDialog(true)}
               variant="destructive"
               className="flex-1 text-sm sm:text-base"
             >
@@ -465,8 +496,41 @@ const SettingsSection: React.FC = () => {
           <p className="text-xs sm:text-sm text-muted-foreground mt-3 sm:mt-4">
             Export your data or permanently delete your account. Account deletion cannot be undone.
           </p>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Delete Account Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="w-5 h-5" />
+              Delete Account
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm sm:text-base">
+              This action cannot be undone. This will permanently delete your account and remove all your data from our servers including:
+              <ul className="list-disc list-inside mt-2 space-y-1 text-xs sm:text-sm">
+                <li>All vault entries and uploaded files</li>
+                <li>Emergency contacts and settings</li>
+                <li>Activity logs and preferences</li>
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-3">
+            <AlertDialogCancel disabled={isDeleting} className="text-sm sm:text-base">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleAccountDeletion}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-sm sm:text-base"
+            >
+              {isDeleting ? "Deleting..." : "Delete Account"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
