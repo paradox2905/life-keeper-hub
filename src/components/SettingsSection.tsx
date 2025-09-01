@@ -496,9 +496,8 @@ const SettingsSection: React.FC = () => {
           <p className="text-xs sm:text-sm text-muted-foreground mt-3 sm:mt-4">
             Export your data or permanently delete your account. Account deletion cannot be undone.
           </p>
-          </CardContent>
-        </Card>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Delete Account Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
