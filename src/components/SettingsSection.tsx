@@ -1,24 +1,39 @@
 import React, { useState } from 'react';
-import { Settings, User, Lock, Bell, Shield, Palette, Download, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Settings, User, Lock, Bell, Shield, Palette, Download, Trash2, Eye, EyeOff, Sun, Moon, Monitor } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserProfile } from '@/contexts/UserProfileContext';
+import { useTheme } from 'next-themes';
 import { supabase } from '@/integrations/supabase/client';
 
 const SettingsSection: React.FC = () => {
   const { user } = useAuth();
+  const { profile, updateDisplayName } = useUserProfile();
+  const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   
-  // Profile settings
+  // Profile settings - sync with context
   const [profileData, setProfileData] = useState({
-    displayName: user?.user_metadata?.full_name || user?.email?.split('@')[0] || '',
-    email: user?.email || '',
+    displayName: '',
+    email: '',
   });
+
+  // Update local state when profile changes
+  React.useEffect(() => {
+    if (profile) {
+      setProfileData({
+        displayName: profile.displayName,
+        email: profile.email,
+      });
+    }
+  }, [profile]);
 
   // Password change
   const [passwordData, setPasswordData] = useState({
@@ -50,29 +65,15 @@ const SettingsSection: React.FC = () => {
 
   const handleProfileUpdate = async () => {
     try {
-      const { error } = await supabase.auth.updateUser({
-        data: {
-          full_name: profileData.displayName
-        }
-      });
-
-      if (error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
+      await updateDisplayName(profileData.displayName);
       toast({
         title: "Profile Updated",
         description: "Your profile information has been saved successfully.",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to update profile. Please try again.",
+        description: error?.message || "Failed to update profile. Please try again.",
         variant: "destructive",
       });
     }
@@ -337,6 +338,47 @@ const SettingsSection: React.FC = () => {
                 checked={notifications.weeklyReports}
                 onCheckedChange={(checked) => setNotifications(prev => ({ ...prev, weeklyReports: checked }))}
               />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Appearance & Theme */}
+        <Card className="transition-all duration-300 hover:shadow-lg">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Palette className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              Appearance
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 sm:space-y-4">
+            <div>
+              <Label className="text-sm">Theme Preference</Label>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-2">Choose your preferred theme</p>
+              <Select value={theme} onValueChange={setTheme}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select theme" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">
+                    <div className="flex items-center gap-2">
+                      <Sun className="w-4 h-4" />
+                      Light
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="dark">
+                    <div className="flex items-center gap-2">
+                      <Moon className="w-4 h-4" />
+                      Dark
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="system">
+                    <div className="flex items-center gap-2">
+                      <Monitor className="w-4 h-4" />
+                      System
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>

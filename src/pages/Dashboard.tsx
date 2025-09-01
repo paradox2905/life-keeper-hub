@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserProfile } from '@/contexts/UserProfileContext';
 import { Navigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -48,6 +49,7 @@ interface VaultEntry {
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
+  const { profile } = useUserProfile();
   const { toast } = useToast();
   
   // Form state
@@ -308,9 +310,9 @@ const Dashboard = () => {
               <h1 className="text-xl sm:text-2xl font-bold">LifeVault</h1>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
-                Welcome, {user.email}
-              </span>
+            <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
+              Welcome, {profile?.displayName || user.email}
+            </span>
               <Button variant="outline" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Sign Out</span>
@@ -426,7 +428,7 @@ const Dashboard = () => {
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
             <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
-              Welcome, {user.email}
+              Welcome, {profile?.displayName || user.email}
             </span>
             <Button variant="outline" size="sm" onClick={handleSignOut}>
               <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
