@@ -89,8 +89,8 @@ const ActivitySection: React.FC = () => {
         .from('activity_logs')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(100);
+        .in('action_type', ['create', 'update', 'delete'])
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching activities:', error);
