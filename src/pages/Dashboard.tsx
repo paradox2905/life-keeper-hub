@@ -18,6 +18,7 @@ import EmergencySection from '@/components/EmergencySection';
 import ContactsSection from '@/components/ContactsSection';
 import ActivitySection from '@/components/ActivitySection';
 import SettingsSection from '@/components/SettingsSection';
+import { useActivityLogger } from '@/hooks/useActivityLogger';
 import { 
   Shield, 
   Users, 
@@ -51,6 +52,7 @@ const Dashboard = () => {
   const { user, loading } = useAuth();
   const { profile } = useUserProfile();
   const { toast } = useToast();
+  const { logActivity } = useActivityLogger();
   
   // Form state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -186,15 +188,32 @@ const Dashboard = () => {
           return;
         }
 
+        // Log activity for update
+        await logActivity({
+          action_type: 'update',
+          action_description: `Updated ${category} entry: ${title}`,
+          category,
+          entity_id: editingEntry.id,
+          entity_type: 'vault_entry',
+          metadata: { 
+            title, 
+            category, 
+            is_important: isImportant,
+            file_name: file.name 
+          }
+        });
+
         toast({
           title: "Entry updated",
           description: "Your entry has been successfully updated.",
         });
       } else {
         // Create new entry
-        const { error: insertError } = await supabase
+        const { data: insertData, error: insertError } = await supabase
           .from('vault_entries')
-          .insert([entryData]);
+          .insert([entryData])
+          .select()
+          .single();
 
         if (insertError) {
           console.error('Insert error:', insertError);
@@ -205,6 +224,22 @@ const Dashboard = () => {
           });
           return;
         }
+
+        // Log activity for create
+        await logActivity({
+          action_type: 'create',
+          action_description: `Created new ${category} entry: ${title}`,
+          category,
+          entity_id: insertData.id,
+          entity_type: 'vault_entry',
+          metadata: { 
+            title, 
+            category, 
+            is_important: isImportant,
+            file_name: file.name,
+            file_size: file.size 
+          }
+        });
 
         toast({
           title: "Entry saved",
@@ -256,7 +291,26 @@ const Dashboard = () => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteEntry = (entryId: string) => {
+  const handleDeleteEntry = async (entryId: string) => {
+    // Find the entry to get its details for logging
+    const entryToDelete = allEntries.find(entry => entry.id === entryId);
+    
+    if (entryToDelete) {
+      // Log activity for delete
+      await logActivity({
+        action_type: 'delete',
+        action_description: `Deleted ${entryToDelete.category} entry: ${entryToDelete.title}`,
+        category: entryToDelete.category,
+        entity_id: entryId,
+        entity_type: 'vault_entry',
+        metadata: { 
+          title: entryToDelete.title, 
+          category: entryToDelete.category,
+          file_name: entryToDelete.file_name
+        }
+      });
+    }
+
     setAllEntries(prev => prev.filter(entry => entry.id !== entryId));
     // Recalculate counts
     const updatedEntries = allEntries.filter(entry => entry.id !== entryId);

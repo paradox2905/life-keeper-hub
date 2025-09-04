@@ -71,12 +71,6 @@ const ActivitySection: React.FC = () => {
   useEffect(() => {
     if (user) {
       fetchActivities();
-      // Add some sample data if no activities exist
-      setTimeout(() => {
-        if (activities.length === 0) {
-          createSampleActivities();
-        }
-      }, 1000);
     }
   }, [user]);
 
@@ -121,64 +115,39 @@ const ActivitySection: React.FC = () => {
     }
   };
 
-  const createSampleActivities = async () => {
+  const deleteAllActivities = async () => {
     if (!user) return;
 
-    const sampleActivities = [
-      {
-        action_type: 'create',
-        action_description: 'Created emergency contact information',
-        category: 'emergency',
-        entity_type: 'contact',
-        metadata: { contact_name: 'Dr. Sarah Johnson' }
-      },
-      {
-        action_type: 'update',
-        action_description: 'Updated medical information',
-        category: 'medical',
-        entity_type: 'medical_info',
-        metadata: { fields_updated: ['blood_group', 'allergies'] }
-      },
-      {
-        action_type: 'upload',
-        action_description: 'Uploaded insurance document',
-        category: 'legal',
-        entity_type: 'document',
-        metadata: { document_name: 'insurance_policy.pdf' }
-      },
-      {
-        action_type: 'create',
-        action_description: 'Added new contact',
-        category: 'contact',
-        entity_type: 'contact',
-        metadata: { contact_name: 'John Smith' }
-      },
-      {
-        action_type: 'update',
-        action_description: 'Changed password',
-        category: 'digital',
-        entity_type: 'security',
-        metadata: { security_action: 'password_change' }
-      }
-    ];
-
     try {
-      for (const activity of sampleActivities) {
-        await supabase.from('activity_logs').insert({
-          user_id: user.id,
-          ...activity
+      const { error } = await supabase
+        .from('activity_logs')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error deleting activities:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete activity logs.",
+          variant: "destructive",
         });
+        return;
       }
-      
-      // Refresh activities after creating samples
-      fetchActivities();
+
+      setActivities([]);
+      setFilteredActivities([]);
       
       toast({
-        title: "Sample Data Added",
-        description: "Added sample activity logs for demonstration.",
+        title: "Activities Deleted",
+        description: "All activity logs have been deleted.",
       });
     } catch (error) {
-      console.error('Error creating sample activities:', error);
+      console.error('Unexpected error deleting activities:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred while deleting activities.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -499,6 +468,14 @@ const ActivitySection: React.FC = () => {
               format="pdf"
               isExporting={exportingFormat === 'pdf'}
             />
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={deleteAllActivities}
+              className="ml-2"
+            >
+              Delete All
+            </Button>
           </div>
         </div>
       </div>
